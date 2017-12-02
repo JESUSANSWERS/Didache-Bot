@@ -46,18 +46,23 @@ public class MessageListener extends ListenerAdapter {
 				String book = books[0];
 				
 				for (int i = 1; i < books.length; i++) {
-					// the reason book.length() is added is to ensure that "John" doesn't take priority over "1 John", for example
-					if ( message.lastIndexOf(books[i]) + books[i].length() > message.lastIndexOf(book) + book.length() ) {
-						book = books[i];
-					}
-					// this could be an OR statement in the first if, but it's not for readability.
-					// this ensures that if two books are in the same place, the one with the longer...
-					// ...name is considered the requested book, because of the "1 John" / "John" issue.
-					else if ( message.lastIndexOf(books[i]) + books[i].length() == message.lastIndexOf(book) + book.length() ) {
-						if (books[i].length() > book.length()) {
+					// if there is no instance, the last index is -1, so when you add the length of deuteronomy
+					// it thinks it's quoted later than the qur'an, even though it's never quoted at all
+					if ( message.contains(books[i])) {
+						// the reason book.length() is added is to ensure that "John" doesn't take priority over "1 John", for example
+						if ( message.lastIndexOf(books[i]) + books[i].length() > message.lastIndexOf(book) + book.length() ) {
 							book = books[i];
 						}
+						// this could be an OR statement in the first if, but it's not for readability.
+						// this ensures that if two books are in the same place, the one with the longer...
+						// ...name is considered the requested book, because of the "1 John" / "John" issue.
+						else if ( message.lastIndexOf(books[i]) + books[i].length() == message.lastIndexOf(book) + book.length() ) {
+							if (books[i].length() > book.length()) {
+								book = books[i];
+							}
+						}
 					}
+					
 				}
 				String bookProper = book.substring(0, 1).toUpperCase() + book.substring(1);
 				
@@ -69,6 +74,7 @@ public class MessageListener extends ListenerAdapter {
 					}
 				}
 				String afterBookName = (String) message.subSequence(message.lastIndexOf(book) + book.length() + 1, lastNumInst + 1);
+				
 				Integer chapter = Integer.valueOf(afterBookName.split(":")[0]);
 				Integer verse = Integer.valueOf(afterBookName.split(":")[1]);
 				//event.getChannel().sendMessage("Book: " + book + "\nChapter: " + chapter + "\nVerse: " + verse).queue();
