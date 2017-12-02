@@ -1,5 +1,7 @@
 package com.john_the_baptist.didache;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.john_the_baptist.didache.books.Bible;
 import com.john_the_baptist.didache.books.Didache;
 import com.john_the_baptist.didache.books.Quran;
@@ -40,9 +42,14 @@ public class MessageListener extends ListenerAdapter {
 				String messageDirty = event.getMessage().getContent().toLowerCase();
 				String message = messageDirty.replace("@didache bot", "");
 				
+				String[] bible = {"genesis", "exodus", "leviticus", "numbers", "deuteronomy", "joshua", "judges", "ruth", "1 samuel", "2 samuel", "1 kings", "2 kings", "1 chronicles", "2 chronicles", "ezra", "nehemiah", "esther", "job", "psalms", "psalm", "proverbs", "proverb", "ecclesiastes", "song of solomon", "isaiah", "jeremiah", "lamentations", "ezekiel", "daniel", "hosea", "joel", "amos", "obadiah", "jonah", "micah", "nahum", "habakkuk", "zephaniah", "haggai", "zechariah", "malachi", "1 esdras", "2 esdras", "3 esdras", "4 esdras", "tobit", "tobias", "judith", "wisdom", "wisdom of solomon", "ecclesiasticus", "sirach", "baruch", "epistle of jeremy", "1 maccabees", "2 maccabees", "matthew", "mark", "luke", "john", "acts", "romans", "1 corinthians", "2 corinthians", "galatians", "ephesians", "philippians", "colossians", "1 thessalonians", "2 thessalonians", "1 timothy", "2 timothy", "titus", "philemon", "hebrews", "james", "1 peter", "2 peter", "1 john", "2 john", "3 john", "jude", "revelation"};
+				
 				String[] books = {"didache",
-						"quran", "qur'an", "koran",
-						"genesis", "exodus", "leviticus", "numbers", "deuteronomy"};
+						"quran", "qur'an", "koran"
+						};
+				
+				books = ArrayUtils.addAll(books, bible);
+				
 				String book = books[0];
 				
 				for (int i = 1; i < books.length; i++) {
@@ -79,21 +86,23 @@ public class MessageListener extends ListenerAdapter {
 				Integer verse = Integer.valueOf(afterBookName.split(":")[1]);
 				//event.getChannel().sendMessage("Book: " + book + "\nChapter: " + chapter + "\nVerse: " + verse).queue();
 				
-				if (book=="didache") {
+				if (book.matches("didache")) {
 					if (Didache.getVerse(chapter, verse) != null) {
-						event.getChannel().sendMessage("**Didache " + chapter + ":" + verse + " - Charles H. Hoole (CHH)**\n```html\n <" + verse + "> " + Didache.getVerse(chapter, verse) + "\n```").queue();
+						event.getChannel().sendMessage("**Didache " + chapter + ":" + verse + " - Charles H. Hoole (CHH)**\n\n```html\n <" + verse + "> " + Didache.getVerse(chapter, verse) + "\n```").queue();
 					} else {
 						event.getChannel().sendMessage("**Invalid verse.**").queue();
 					}
-				} else if (book=="quran" || book=="qu'ran" || book=="koran") {
+				} else if (book.matches("quran|qur'an|koran")) {
 					if (Quran.getVerse(chapter, verse) != null) {
-						event.getChannel().sendMessage("**Qur'an " + chapter + ":" + verse + " - The Message of the Qur'an (ASAD)**\n```html\n <" + verse + "> " + Quran.getVerse(chapter, verse) + "\n```").queue();
+						event.getChannel().sendMessage("**Qur'an " + chapter + ":" + verse + " - The Message of the Qur'an (ASAD)**\n\n```html\n <" + verse + "> " + Quran.getVerse(chapter, verse) + "\n```").queue();
 					} else {
 						event.getChannel().sendMessage("**Invalid verse.**").queue();
 					}
-				} else if (book.matches("genesis|exodus|leviticus|numbers|deuteronomy")) {
+				} else if (book.matches("genesis|exodus|leviticus|numbers|deuteronomy|joshua|judges|ruth|1 samuel|2 samuel|1 kings|2 kings|1 chronicles|2 chronicles|ezra|nehemiah|esther|job|psalms|psalm|proverbs|proverb|ecclesiastes|song of solomon|isaiah|jeremiah|lamentations|ezekiel|daniel|hosea|joel|amos|obadiah|jonah|micah|nahum|habakkuk|zephaniah|haggai|zechariah|malachi|1 esdras|2 esdras|3 esdras|4 esdras|tobit|tobias|judith|wisdom|wisdom of solomon|ecclesiasticus|sirach|baruch|epistle of jeremy|1 maccabees|2 maccabees|matthew|mark|luke|john|acts|romans|1 corinthians|2 corinthians|galatians|ephesians|philippians|colossians|1 thessalonians|2 thessalonians|1 timothy|2 timothy|titus|philemon|hebrews|james|1 peter|2 peter|1 john|2 john|3 john|jude|revelation")) {
 					if (Bible.getVerse(book, chapter, verse) != null) {
-						event.getChannel().sendMessage("**" + bookProper + " " + chapter + ":" + verse + " - King James Version with Apocrypha, American Edition (KJVA)**\n```html\n <" + verse + "> " + Bible.getVerse(book, chapter, verse) + "\n```").queue();
+						event.getChannel().sendMessage("**" + bookProper + " " + chapter + ":" + verse + " - King James Version with Apocrypha, American Edition (KJVA)**\n\n```html\n <" + verse + "> " + Bible.getVerse(book, chapter, verse) + "\n```").queue();
+					} else {
+						event.getChannel().sendMessage("**Invalid verse.**").queue();
 					}
 				}
 				
