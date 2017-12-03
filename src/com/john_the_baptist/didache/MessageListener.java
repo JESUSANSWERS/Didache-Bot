@@ -55,21 +55,32 @@ public class MessageListener extends ListenerAdapter {
 				for (int i = 1; i < books.length; i++) {
 					// if there is no instance, the last index is -1, so when you add the length of deuteronomy
 					// it thinks it's quoted later than the qur'an, even though it's never quoted at all
-					if ( message.contains(books[i])) {
-						// the reason book.length() is added is to ensure that "John" doesn't take priority over "1 John", for example
-						if ( message.lastIndexOf(books[i]) + books[i].length() > message.lastIndexOf(book) + book.length() ) {
-							book = books[i];
-						}
-						// this could be an OR statement in the first if, but it's not for readability.
-						// this ensures that if two books are in the same place, the one with the longer...
-						// ...name is considered the requested book, because of the "1 John" / "John" issue.
-						else if ( message.lastIndexOf(books[i]) + books[i].length() == message.lastIndexOf(book) + book.length() ) {
-							if (books[i].length() > book.length()) {
+					if ( message.contains(books[i]) ) {
+						// message.lastIndexOf(book) + book.length() could be greater than the first
+						// value compared if it's never quoted, for example: if James is quoted from
+						// the book name is too short and -1+7 > 0+5
+						// the if statement is used to ensure that the book var is actually used in the msg
+						// the default value for book is books[0] and that is the only time when the book
+						// variable wouldn't be contained in the msg.
+						if ( message.contains(book) ) {
+							// the reason book.length() is added is to ensure that "John" doesn't take priority over "1 John", for example
+							if ( message.lastIndexOf(books[i]) + books[i].length() > message.lastIndexOf(book) + book.length() ) {
 								book = books[i];
 							}
+							// this could be an OR statement in the first if, but it's not for readability.
+							// this ensures that if two books are in the same place, the one with the longer...
+							// ...name is considered the requested book, because of the "1 John" / "John" issue.
+							else if ( message.lastIndexOf(books[i]) + books[i].length() == message.lastIndexOf(book) + book.length() ) {
+								if (books[i].length() > book.length()) {
+									book = books[i];
+								}
+							}
+						// case where book is never mentioned within msg
+						// read comments above the if statement for more info
+						} else {
+							book = books[i];
 						}
 					}
-					
 				}
 				String bookProper = book.substring(0, 1).toUpperCase() + book.substring(1);
 				
@@ -81,7 +92,6 @@ public class MessageListener extends ListenerAdapter {
 					}
 				}
 				String afterBookName = (String) message.subSequence(message.lastIndexOf(book) + book.length() + 1, lastNumInst + 1);
-				
 				Integer chapter = Integer.valueOf(afterBookName.split(":")[0]);
 				Integer verse = Integer.valueOf(afterBookName.split(":")[1]);
 				//event.getChannel().sendMessage("Book: " + book + "\nChapter: " + chapter + "\nVerse: " + verse).queue();
@@ -100,7 +110,7 @@ public class MessageListener extends ListenerAdapter {
 					}
 				} else if (book.matches("genesis|exodus|leviticus|numbers|deuteronomy|joshua|judges|ruth|1 samuel|2 samuel|1 kings|2 kings|1 chronicles|2 chronicles|ezra|nehemiah|esther|job|psalms|psalm|proverbs|proverb|ecclesiastes|song of solomon|isaiah|jeremiah|lamentations|ezekiel|daniel|hosea|joel|amos|obadiah|jonah|micah|nahum|habakkuk|zephaniah|haggai|zechariah|malachi|1 esdras|2 esdras|3 esdras|4 esdras|tobit|tobias|judith|wisdom|wisdom of solomon|ecclesiasticus|sirach|baruch|epistle of jeremy|1 maccabees|2 maccabees|matthew|mark|luke|john|acts|romans|1 corinthians|2 corinthians|galatians|ephesians|philippians|colossians|1 thessalonians|2 thessalonians|1 timothy|2 timothy|titus|philemon|hebrews|james|1 peter|2 peter|1 john|2 john|3 john|jude|revelation")) {
 					if (Bible.getVerse(book, chapter, verse) != null) {
-						event.getChannel().sendMessage("**" + bookProper + " " + chapter + ":" + verse + " - King James Version with Apocrypha, American Edition (KJVA)**\n\n```html\n <" + verse + "> " + Bible.getVerse(book, chapter, verse) + "\n```").queue();
+						event.getChannel().sendMessage("**" + bookProper + " " + chapter + ":" + verse + " - King James Version with Apocrypha, American Edition (KJVA)**\n\n```html\n <" + verse + ">" + Bible.getVerse(book, chapter, verse) + "\n```").queue();
 					} else {
 						event.getChannel().sendMessage("**Invalid verse.**").queue();
 					}

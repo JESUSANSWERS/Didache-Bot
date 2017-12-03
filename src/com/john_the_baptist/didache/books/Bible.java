@@ -13,7 +13,7 @@ public class Bible {
 		String clean = StringEscapeUtils.unescapeJson(json);
 		if (!clean.contains("{\"type\":\"passages\",\"passages\":[]}},") && clean.contains("{\"response\":{\"search\":{\"result\":")) {
 			String verseText = clean.split("</sup>")[1].split("</p>\",")[0];
-			return verseText;
+			return verseText.replace("<span class=\"add\">", "").replace("</span>", "").replace("</p>", "").replace("<p class=\"p\">", "\n");
 		}
 		return null;
 	}
