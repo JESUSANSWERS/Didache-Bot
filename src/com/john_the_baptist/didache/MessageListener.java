@@ -2,15 +2,12 @@ package com.john_the_baptist.didache;
 
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.john_the_baptist.didache.books.Bible;
 import com.john_the_baptist.didache.books.Bible2;
 import com.john_the_baptist.didache.books.Didache;
 import com.john_the_baptist.didache.books.Quran;
 
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
