@@ -1,10 +1,14 @@
 package com.john_the_baptist.didache;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
+
 import javax.security.auth.login.LoginException;
-
-import org.apache.commons.lang3.ArrayUtils;
-
-import com.john_the_baptist.didache.books.Bible;
 
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -15,8 +19,8 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class DidacheBot {
 	
-	public static final String DISCORD_AUTH_KEY = "";
-	public static final String BIBLES_AUTH_KEY = "";
+	public static String discordAuthKey;
+	public static String biblesOrgAuthKey;
 	
 	public static User user;
 	
@@ -26,8 +30,9 @@ public class DidacheBot {
 			};
 
 	public static void main(String[] args) throws LoginException, IllegalArgumentException, InterruptedException, RateLimitedException {
+		handleProperties();
 		
-		JDA jda = new JDABuilder(AccountType.BOT).setToken(DISCORD_AUTH_KEY).buildBlocking();
+		JDA jda = new JDABuilder(AccountType.BOT).setToken(discordAuthKey).buildBlocking();
 		user = jda.getSelfUser();
 		
 		jda.getPresence().setGame(Game.playing("d!help"));
@@ -35,6 +40,32 @@ public class DidacheBot {
 		jda.addEventListener(new MessageListener());
 	}
 	
+	public static void handleProperties() {
+		// properties file
+		if ( new File("config.properties").exists() ) {
+			Properties prop = new Properties();
+			InputStream input = null;
+			try {
+				input = new FileInputStream("config.properties");
+				prop.load(input);
+				discordAuthKey = prop.getProperty("discordAuthKey");
+				biblesOrgAuthKey = prop.getProperty("biblesOrgAuthKey");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			Properties prop = new Properties();
+			OutputStream output = null;
+			try {
+				output = new FileOutputStream("config.properties");
+				prop.setProperty("discordAuthKey", "");
+				prop.setProperty("biblesOrgAuthKey", "");
+				prop.store(output, null);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 
 }
